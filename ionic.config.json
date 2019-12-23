@@ -1,0 +1,7 @@
+{
+  "name": "acsa",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
