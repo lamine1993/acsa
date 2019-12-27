@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
-import { MeteoPage } from '../meteo/meteo';
+import { NavController, IonicPage } from 'ionic-angular';
+@IonicPage()
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -11,8 +11,8 @@ export class HomePage {
 
   }
 
-  goToMeteo=()=>{
-   this.navCtrl.push(MeteoPage);
+  goToMeteo(){
+   this.navCtrl.push('MeteoPage');
   }
 
 }
