@@ -6,9 +6,10 @@ import {ComponentsModule} from '../../components/components.module';
 @NgModule({
   declarations: [
     MeteoPage,
-    ComponentsModule
+    
   ],
   imports: [
+    ComponentsModule,
     IonicPageModule.forChild(MeteoPage),
   ],
 })
