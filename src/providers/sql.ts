@@ -10,10 +10,12 @@ const win: any=window;
 export class Sql {
   private _dbPromise: Promise<any>;
 
-  constructor(public platform: Platform, ) {
-      this._dbPromise= new Promise<any>(function(resolve, reject){
+  constructor(public platform: Platform ) {
+      this._dbPromise= new Promise<any>((resolve, reject)=>{
         let db:any;
+        console.log('ok');
         this.platform.ready().then(()=>{
+          
             if(this.platform.is('cordova')&& win.sqklitePlugin){
                 db = win.sqlitePlugin.openDatabase({
                     name: DB_NAME,
@@ -21,14 +23,15 @@ export class Sql {
                   });
             }else{
               console.log("error: verifier si le plugin stglit est installer");
-              db = win.openDatabase(DB_NAME, '1.0', 'database', 5 * 1024 * 1024);
+              
+              db = win.openDatabase('__acsa', '1.0', 'Data', 5 * 1024 * 1024);
              }
             resolve(db);
         }).catch((err)=>{
            reject({err:err});
         })
       });
-      this._tryInit();
+     // this._tryInit();
   }
 
   _tryInit() {
@@ -49,5 +52,13 @@ export class Sql {
             reject({err : err});
         }
        });
+    }
+
+    get(key: number, table:string): Promise<any> {
+      return this.query('select * from'+table+' where key = ? limit 1', [key]).then(data => {
+        if (data.res.rows.length > 0) {
+          return data.res.rows.item(0).value;
+        }
+      });
     }
 }

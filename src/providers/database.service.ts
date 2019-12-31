@@ -17,14 +17,14 @@ export class DatabaseService {
   // table_forecast queries
   //
 
-  addDate(dateMeteo: DateMeteo):Promise<number>{
-    let createTableDateMeteo: string = 'CREATE TABLE IF NOT EXISTS'+ this.table_date_meteo+'(jourIntervalleDebut TEXT, jourIntervalleFin TEXT)';
-    let insertQuery: string = 'INSERT OR REPLACE INTO' + this.table_date_meteo+'(jourIntervalleDebut, jourIntervalleFin) VALUES (?, ?)';
+  async addDate(dateMeteo: DateMeteo):Promise<number>{
+    let createTableDateMeteo: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_date_meteo+' (jourIntervalleDebut TEXT, jourIntervalleFin TEXT)';
+    let insertQuery: string = 'INSERT OR REPLACE INTO ' + this.table_date_meteo+' (jourIntervalleDebut, jourIntervalleFin) VALUES (?, ?)';
     let self = this;
-    return self._db.query(createTableDateMeteo)
+    return await self._db.query(createTableDateMeteo)
            .then(()=>self._db.query(insertQuery, [JSON.stringify(dateMeteo)]))
            .then((data)=>{
-             console.debug(data);
+             console.log("date"+data.res);
              return data.res.insertId;
             }).catch(error=>{
               console.debug(error);
@@ -32,14 +32,14 @@ export class DatabaseService {
             })
   }
 
-  addAudio(audio: AudioType):Promise<number>{
-    let createTableAudio: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_audio_type+'(src TEXT)';
-    let insertQuery: string = 'INSERT OR REPLACE INTO' + this.table_audio_type+'(src) VALUES (?)';
+  async addAudio(audio: AudioType):Promise<number>{
+    let createTableAudio: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_audio_type+' (src TEXT)';
+    let insertQuery: string = 'INSERT OR REPLACE INTO ' + this.table_audio_type+' (src) VALUES (?)';
     let self = this;
-    return self._db.query(createTableAudio)
+    return await self._db.query(createTableAudio)
            .then(()=>self._db.query(insertQuery, [JSON.stringify(audio)]))
            .then((data)=>{
-             console.debug(data);
+            console.log("audio"+data.res);
              return data.res.insertId;
             }).catch(error=>{
               console.debug(error);
@@ -47,14 +47,14 @@ export class DatabaseService {
             })
   }
 
-  addMeteoZone(meteoZone: MeteoZone):Promise<number>{
-    let createTableMeteoZone: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_meteo_zone+'(zone TEXT, region TEXT, departement: TEXT, paysage_ciel: TEXT, temperature: TEXT, temperatureMax: TEXT, temperatureMin: TEXT, humidite:TEXT, vent: TEXT)';
-    let insertQuery: string = 'INSERT OR REPLACE INTO' + this.table_meteo_zone+'(zone, region, departement, paysage_ciel, temperature, temperatureMax, temperatureMin, humidite, vent) VALUES (?,?,?,?,?,?,?,?,?)';
+  async addMeteoZone(meteoZone: MeteoZone):Promise<number>{
+    let createTableMeteoZone: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_meteo_zone+' (zone TEXT, region TEXT, departement TEXT, paysage_ciel TEXT, temperature TEXT, temperatureMax TEXT, temperatureMin TEXT, humidite TEXT, vent TEXT)';
+    let insertQuery: string = 'INSERT OR REPLACE INTO ' + this.table_meteo_zone+' (zone, region, departement, paysage_ciel, temperature, temperatureMax, temperatureMin, humidite, vent) VALUES (?,?,?,?,?,?,?,?,?)';
     let self = this;
-    return self._db.query(createTableMeteoZone)
+    return await self._db.query(createTableMeteoZone)
            .then(()=>self._db.query(insertQuery, [JSON.stringify(meteoZone)]))
            .then((data)=>{
-             console.debug(data);
+            console.log("zone"+data.res);
              return data.res.insertId;
             }).catch(error=>{
               console.debug(error);
@@ -64,20 +64,21 @@ export class DatabaseService {
 
 
 
-  addMeteo(meteo: BulletinMeteo): Promise<boolean> {
+  //addMeteo(meteo: BulletinMeteo): Promise<boolean> {
     //let lastUpdated: number = Date.now();
-    let insertQuery: string = `INSERT OR REPLACE INTO ${this.table_meteo} (idMeteoZone, idAudio, idDate) VALUES (?, ?, ?)`;
-    let createTableQuery: string = `CREATE TABLE IF NOT EXISTS ${this.table_meteo} (idMeteoZone INTEGER , idAudio INTEGER, idAudio INTEGER)`;
+   async addMeteo(meteo: BulletinMeteo): Promise<any> {
+    let insertQuery: string = 'INSERT OR REPLACE INTO '+this.table_meteo +'(idMeteoZone, idAudio, idDate) VALUES (?, ?, ?)';
+    let createTableQuery: string = 'CREATE TABLE IF NOT EXISTS '+this.table_meteo +'(idMeteoZone INTEGER , idAudio INTEGER, idDate INTEGER)';
     let self = this;
-    return self._db.query(createTableQuery)
+    return await self._db.query(createTableQuery)
       .then(() => self._db.query(insertQuery, [this.addMeteoZone(meteo.prevision).then(data=>{return data;}), this.addAudio(meteo.resume).then(data=>{return data;}), this.addDate(meteo.intervalleDate).then(data=>{return data;})]))
       .then(data => {
         console.debug(name + ' > Inserted with id -> ' + data.res.insertId);
-        return true;
+        return data.res;
       })
       .catch(error => {
-        console.error('Saving forecast error -> ' + error.err.message);
-        return false;
+        console.error('Saving meteo error -> ' + error.err.message);
+        return null;
       });
   }
 }
