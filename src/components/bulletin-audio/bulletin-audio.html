@@ -1,16 +1,14 @@
 <!-- Generated template for the BulletinAudioComponent component -->
 <div>
-  <ion-list>
-    <audio-track #audio *ngFor="let track of myTracks"  [track]="track" (onFinish)="onTrackFinished($event)">
-      <ion-item>
-        <ion-thumbnail item-left>
-          <img src="assets/imgs/menu/meteo.jpg">
-        </ion-thumbnail> 
-        <div style="display: flex"> 
-          <audio-track-play dark [audioTrack]="audio"><ion-spinner></ion-spinner></audio-track-play>
-          <audio-track-progress-bar  progress [audioTrack]="audio" style="width: 100%; margin: 0 10px"></audio-track-progress-bar>
-        </div>
-      </ion-item>    
-    </audio-track>
-  </ion-list>
+  <audio-track #audio1  [track]="audio" (onFinish)="onTrackFinished($event)">
+    <ion-item>
+      <ion-thumbnail item-left>
+        <img src="assets/imgs/menu/meteo.jpg">
+      </ion-thumbnail> 
+      <div style="display: flex"> 
+        <audio-track-play dark [audioTrack]="audio1"><ion-spinner></ion-spinner></audio-track-play>
+        <audio-track-progress-bar progress [audioTrack]="audio1" style="width: 100%; margin: 0 10px"></audio-track-progress-bar>
+      </div>
+    </ion-item>    
+  </audio-track>
 </div>

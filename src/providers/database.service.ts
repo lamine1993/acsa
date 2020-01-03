@@ -6,9 +6,9 @@ import { MeteoZone, BulletinMeteo, DateMeteo, AudioType } from './model';
 export class DatabaseService {
 
   private table_meteo = 'meteo';
-  private table_date_meteo = 'date_meteo';
+  private table_date_meteo = 'date';
   private table_audio_type = 'audio';
-  private table_meteo_zone = 'meteo_zone';
+  private table_meteo_zone = 'zone';
 
   constructor(public _db: Sql) {
   }
@@ -17,29 +17,29 @@ export class DatabaseService {
   // table_forecast queries
   //
 
-  async addDate(dateMeteo: DateMeteo):Promise<number>{
-    let createTableDateMeteo: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_date_meteo+' (jourIntervalleDebut TEXT, jourIntervalleFin TEXT)';
-    let insertQuery: string = 'INSERT OR REPLACE INTO ' + this.table_date_meteo+' (jourIntervalleDebut, jourIntervalleFin) VALUES (?, ?)';
+  addDate(dateMeteo: DateMeteo):Promise<number>{
+    let createTableDateMeteo: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_date_meteo+' (intervalleDate TEXT)';
+    let insertQuery: string = 'INSERT OR REPLACE INTO ' + this.table_date_meteo+' (intervalleDate) VALUES (?)';
     let self = this;
-    return await self._db.query(createTableDateMeteo)
+    return  self._db.query(createTableDateMeteo)
            .then(()=>self._db.query(insertQuery, [JSON.stringify(dateMeteo)]))
            .then((data)=>{
-             console.log("date"+data.res);
+            console.log(data.res);
              return data.res.insertId;
             }).catch(error=>{
-              console.debug(error);
+              console.log(error);
                return 0;
             })
   }
 
-  async addAudio(audio: AudioType):Promise<number>{
+  addAudio(audio: AudioType):Promise<number>{
     let createTableAudio: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_audio_type+' (src TEXT)';
     let insertQuery: string = 'INSERT OR REPLACE INTO ' + this.table_audio_type+' (src) VALUES (?)';
     let self = this;
-    return await self._db.query(createTableAudio)
+    return  self._db.query(createTableAudio)
            .then(()=>self._db.query(insertQuery, [JSON.stringify(audio)]))
            .then((data)=>{
-            console.log("audio"+data.res);
+            console.log(data.res);
              return data.res.insertId;
             }).catch(error=>{
               console.debug(error);
@@ -47,14 +47,14 @@ export class DatabaseService {
             })
   }
 
-  async addMeteoZone(meteoZone: MeteoZone):Promise<number>{
-    let createTableMeteoZone: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_meteo_zone+' (zone TEXT, region TEXT, departement TEXT, paysage_ciel TEXT, temperature TEXT, temperatureMax TEXT, temperatureMin TEXT, humidite TEXT, vent TEXT)';
-    let insertQuery: string = 'INSERT OR REPLACE INTO ' + this.table_meteo_zone+' (zone, region, departement, paysage_ciel, temperature, temperatureMax, temperatureMin, humidite, vent) VALUES (?,?,?,?,?,?,?,?,?)';
+ addMeteoZone(meteoZone: MeteoZone):Promise<number>{
+    let createTableMeteoZone: string = 'CREATE TABLE IF NOT EXISTS '+ this.table_meteo_zone+' (zone TEXT)';
+    let insertQuery: string = 'INSERT OR REPLACE INTO ' + this.table_meteo_zone+' (zone) VALUES (?)';
     let self = this;
-    return await self._db.query(createTableMeteoZone)
+    return  self._db.query(createTableMeteoZone)
            .then(()=>self._db.query(insertQuery, [JSON.stringify(meteoZone)]))
            .then((data)=>{
-            console.log("zone"+data.res);
+            console.log(data.res);
              return data.res.insertId;
             }).catch(error=>{
               console.debug(error);
@@ -63,17 +63,15 @@ export class DatabaseService {
   }
 
 
+  addMeteo(meteo: BulletinMeteo, date: string): Promise<any> {
 
-  //addMeteo(meteo: BulletinMeteo): Promise<boolean> {
-    //let lastUpdated: number = Date.now();
-   async addMeteo(meteo: BulletinMeteo): Promise<any> {
-    let insertQuery: string = 'INSERT OR REPLACE INTO '+this.table_meteo +'(idMeteoZone, idAudio, idDate) VALUES (?, ?, ?)';
-    let createTableQuery: string = 'CREATE TABLE IF NOT EXISTS '+this.table_meteo +'(idMeteoZone INTEGER , idAudio INTEGER, idDate INTEGER)';
+    let insertQuery: string = 'INSERT OR REPLACE INTO '+this.table_meteo +'(prevision, audio, intervalleDate,zone,  dateAjout) VALUES (?, ?, ?, ?, ?)';
+    let createTableQuery: string = 'CREATE TABLE IF NOT EXISTS '+this.table_meteo +'(prevision TEXT, audio TEXT, intervalleDate TEXT, zone TEXT, dateAjout TEXT)';
     let self = this;
-    return await self._db.query(createTableQuery)
-      .then(() => self._db.query(insertQuery, [this.addMeteoZone(meteo.prevision).then(data=>{return data;}), this.addAudio(meteo.resume).then(data=>{return data;}), this.addDate(meteo.intervalleDate).then(data=>{return data;})]))
+    return self._db.query(createTableQuery)
+      .then(() => self._db.query(insertQuery, [JSON.stringify(meteo.prevision), JSON.stringify(meteo.resume), JSON.stringify(meteo.intervalleDate), meteo.prevision.zone, date]))
       .then(data => {
-        console.debug(name + ' > Inserted with id -> ' + data.res.insertId);
+        console.debug(' > Inserted with id -> ' + data.res.insertId);
         return data.res;
       })
       .catch(error => {
@@ -81,4 +79,27 @@ export class DatabaseService {
         return null;
       });
   }
+
+  getMeteo(zone: string, date: string): Promise<{ prevision: MeteoZone, resume: AudioType, date: string  }> {    
+    let getQuery: string = 'SELECT prevision, audio, dateAjout FROM '+ this.table_meteo+ ' WHERE zone = ? AND dateAjout = ? LIMIT 1 ;';
+    console.log(zone+ ' '+ date)
+    return this._db.query(getQuery, [zone, date])
+      .then(data => {
+        console.log(JSON.stringify(data.res));
+        if (data.res.rows.length > 0) {
+          let obj: any = data.res.rows.item(0);
+          return {
+            prevision: JSON.parse(obj.prevision),
+            resume: JSON.parse(obj.audio),
+            date: obj.dateAjout
+          };
+        }
+        return null;
+      })
+      .catch(error => {
+        console.error('Getting  error -> ' + error.err.message);
+        return null;
+      });
+  }
+
 }

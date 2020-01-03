@@ -27,7 +27,7 @@ export class TestService {
     };   
 
     this.zone={
-        zone: "Nord",
+        zone: "NORD",
         region: "SAINT-LOUIS",
         departement: "SAINT-LOUIS",
         paysage_ciel: "DEGAGE",
@@ -46,12 +46,15 @@ export class TestService {
 
 
     this.platform.ready().then(()=>{
-        console.log(this.bulletin)
-        this.bd_service.addMeteo(this.bulletin).then(data=>{
-            
+        let dateAjout: Date= new Date();
+        let date: string =''+ dateAjout.getUTCDay()+ '/'+ (dateAjout.getMonth()+1) +'/'+dateAjout.getFullYear();
+        this.bd_service.addMeteo(this.bulletin, date).then(data=>{
+            console.log(data)
         }).catch(err=>{
             console.log(err);
         });
+        
+        this.bd_service.getMeteo("NORD", date).then(data=>{console.log("resulat: "+JSON.stringify(data))})
     });
   }
 

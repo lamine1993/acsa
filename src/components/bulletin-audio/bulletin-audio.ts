@@ -17,15 +17,21 @@ export class BulletinAudioComponent {
   text: string;
   myTracks: any[];
   allTracks: any[];
+  audio: any;
   constructor( private _audioProvider: AudioProvider) {
     console.log('Hello BulletinAudioComponent Component');
     this.text = 'Ici va se charger la Date et L\'audio de la meteo';
     this.myTracks= [
     {
-      src: 'https://archive.org/download/JM2013-10-05.flac16/V0/jm2013-10-05-t30-MP3-V0.mp3',
+      src: 'assets/audios/au1.mp3',
       preload: 'metadata' // tell the plugin to preload metadata such as duration for this track,  set to 'none' to turn off
     }
   ];
+    
+    this.audio={
+      src: 'assets/audios/au1.mp3',
+      preload: 'metadata' // tell the plugin to preload metadata such as duration for this track,  set to 'none' to turn off
+    };
   }
 
   
