@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-
-import { AudioProvider, ITrackConstraint } from 'ionic-audio';
+import { Component, EventEmitter, Input, OnDestroy, OnInit } from '@angular/core';
+import { AudioProvider } from 'ionic-audio';
+import {DatabaseService, BulletinMeteo} from '../../providers';
+import { Subscription } from 'rxjs/Subscription';
 
 /**
  * Generated class for the BulletinAudioComponent component.
@@ -12,8 +13,13 @@ import { AudioProvider, ITrackConstraint } from 'ionic-audio';
   selector: 'bulletin-audio',
   templateUrl: 'bulletin-audio.html'
 })
-export class BulletinAudioComponent {
+export class BulletinAudioComponent implements OnInit {
 
+  @Input() meteo: BulletinMeteo;
+  @Input() onInitEmitter: EventEmitter<string>;
+  @Input() onDestroyEmitter: EventEmitter<string>;
+  meteoSubscriber: Subscription;
+  public laMeteo:BulletinMeteo;
   text: string;
   myTracks: any[];
   allTracks: any[];
@@ -37,7 +43,9 @@ export class BulletinAudioComponent {
   
   ngAfterContentInit() {     
     // get all tracks managed by AudioProvider so we can control playback via the API
-    this.allTracks = this._audioProvider.tracks;  
+    console.log("les track "+this.meteo.resume);
+    this.allTracks = this._audioProvider.create(this.meteo.resume);  
+    console.log("les track "+this.allTracks);
   }
   
   playSelectedTrack() {
@@ -54,5 +62,33 @@ export class BulletinAudioComponent {
     console.log('Track finished', track)
   } 
 
+  ngOnInit() {
+    if (this.onInitEmitter) {
+      this.onInitEmitter.subscribe(() => this.init());
+    }
+    if (this.onDestroyEmitter) {
+      this.onDestroyEmitter.subscribe(() => this.destroy());
+    }
+    this.init();
+}
+
+init() {
+  let self = this;
+  console.log(self.meteo);
+  if (self.meteo) {
+    
+    self.laMeteo=self.meteo;
+  }
+}
+
+ngOnDestroy() {
+  this.destroy();
+}
+
+destroy() {
+  if (this.meteoSubscriber) {
+    this.meteoSubscriber.unsubscribe();
+  }
+}
 
 }

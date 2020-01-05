@@ -23,7 +23,8 @@ export class TestService {
         jourIntervalleFin: "31/12/2019"
     };
     this.audio={
-        src:"source audio"
+        src:"assets/audios/au1.mp3",
+        preload: "metadata"
     };   
 
     this.zone={
@@ -53,9 +54,7 @@ export class TestService {
         }).catch(err=>{
             console.log(err);
         });
-        
-        this.bd_service.getMeteo("NORD", date).then(data=>{console.log("resulat: "+JSON.stringify(data))})
+       // this.bd_service.getMeteo("NORD", date).then(data=>{console.log("resulat: "+JSON.stringify(data))})
     });
   }
-
 }

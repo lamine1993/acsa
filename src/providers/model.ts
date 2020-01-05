@@ -20,6 +20,7 @@ export interface PageInterface {
 
 export interface AudioType {
    src: string;
+   preload: string;
 }
 
 export interface DateMeteo{

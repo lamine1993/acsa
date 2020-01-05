@@ -12,6 +12,13 @@
 </ion-header>
 
 <ion-content padding>
-  <bulletin-audio></bulletin-audio>
-  <donnee-meteo></donnee-meteo>
+  <div *ngIf="meteo">
+    <bulletin-audio  [meteo]="meteo"
+                   [onInitEmitter]="onInitAudioEmitter"
+                   [onDestroyEmitter]="onDestroyAudioEmitter"></bulletin-audio >
+    <donnee-meteo  [meteo]="meteo"
+                 [onInitEmitter]="onInitEmitter"
+                 [onDestroyEmitter]="onDestroyEmitter"></donnee-meteo>
+  </div>
+  
 </ion-content>
