@@ -3,6 +3,7 @@ import {DatabaseService} from './database.service';
 import { Platform } from 'ionic-angular';
 import { MeteoZone, BulletinMeteo, DateMeteo, AudioType } from './model';
 import { HttpClient } from '@angular/common/http';
+import moment from 'moment';
 
 /*
   Generated class for the MeteoServiceProvider provider.
@@ -47,14 +48,16 @@ export class TestService {
 
 
     this.platform.ready().then(()=>{
-        let dateAjout: Date= new Date();
-        let date: string =''+ dateAjout.getUTCDay()+ '/'+ (dateAjout.getMonth()+1) +'/'+dateAjout.getFullYear();
+        //let dateAjout: string = new Date().toISOString().substring(0, 10);
+        let date = moment().format("YYYY-MM-DD");
+       // let date: string =''+ dateAjout.getDay()+ '/'+ (dateAjout.getMonth()+1) +'/'+dateAjout.getFullYear();
+        console.log("date: "+date);
         this.bd_service.addMeteo(this.bulletin, date).then(data=>{
             console.log(data)
         }).catch(err=>{
             console.log(err);
         });
-       // this.bd_service.getMeteo("NORD", date).then(data=>{console.log("resulat: "+JSON.stringify(data))})
+        //this.bd_service.getMeteo("NORD", date).then(data=>{console.log("resulat: "+JSON.stringify(date))})
     });
   }
 }

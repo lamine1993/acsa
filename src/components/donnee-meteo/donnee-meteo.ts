@@ -14,9 +14,9 @@ import { Subscription } from 'rxjs/Subscription';
 })
 
 export class DonneeMeteoComponent implements OnInit {
-  @Input() meteo: BulletinMeteo;
   @Input() onInitEmitter: EventEmitter<string>;
   @Input() onDestroyEmitter: EventEmitter<string>;
+  @Input() meteo: BulletinMeteo;
   text: string;
   meteoSubscriber: Subscription;
   public laMeteo:BulletinMeteo;
@@ -29,23 +29,25 @@ export class DonneeMeteoComponent implements OnInit {
 
 
   ngOnInit() {
-      if (this.onInitEmitter) {
-        this.onInitEmitter.subscribe(() => this.init());
-      }
-      if (this.onDestroyEmitter) {
-        this.onDestroyEmitter.subscribe(() => this.destroy());
-      }
+    if (this.onInitEmitter) {
+      this.onInitEmitter.subscribe(() => this.init());
+    }
+    if (this.onDestroyEmitter) {
+      this.onDestroyEmitter.subscribe(() => this.destroy());
+    }
       this.init();
   }
 
 
   init() {
     let self = this;
-    console.log(self.meteo);
+    //console.log("données meteo "+self.meteo.prevision);
     if (self.meteo) {  
       self.laMeteo=self.meteo;
+      //console.log("données meteo "+JSON.stringify(self.laMeteo));
     }
   }
+  
 
 
   ngOnDestroy() {

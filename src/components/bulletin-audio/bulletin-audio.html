@@ -1,7 +1,7 @@
 <!-- Generated template for the BulletinAudioComponent component -->
 <div>
-  <audio-track #audio  [track]="allTracks" (onFinish)="onTrackFinished($event)">
-    <p> {{allTracks}} </p>
+  <audio-track #audio  [track]="laMeteo.resume" (onFinish)="onTrackFinished($event)">
+    <p> Meteo du {{laMeteo.date}} </p>
     <ion-item>
       <ion-thumbnail item-left>
         <img src="assets/imgs/menu/meteo.jpg"> 

@@ -106,5 +106,6 @@
     <allow-navigation href="http://192.168.42.29:8100" sessionid="fb646ad0" />
     <allow-navigation href="http://192.168.42.6:8100" sessionid="abb8463b" />
     <allow-navigation href="http://10.151.0.118:8100" sessionid="ec5b73e2" />
+    <allow-navigation href="http://192.168.42.34:8100" sessionid="d924a8b9" />
     <engine name="android" spec="^7.1.4" />
 </widget>

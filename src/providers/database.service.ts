@@ -80,10 +80,10 @@ export class DatabaseService {
       });
   }
 
-  getMeteo(zone: string, date: string): Promise<{ prevision: MeteoZone, resume: AudioType, date: string  }> {    
+  getMeteo(zone: string, today: string): Promise<{prevision: MeteoZone, resume: AudioType, date: string  }> {    
     let getQuery: string = 'SELECT prevision, audio, dateAjout FROM '+ this.table_meteo+ ' WHERE zone = ? AND dateAjout = ? LIMIT 1 ;';
-    console.log(zone+ ' '+ date)
-    return this._db.query(getQuery, [zone, date])
+    console.log(zone+ ' '+ today)
+    return this._db.query(getQuery, [zone, today])
       .then(data => {
         console.log(JSON.stringify(data.res));
         if (data.res.rows.length > 0) {
